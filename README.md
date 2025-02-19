@@ -3,9 +3,9 @@ Caso de Negocio: Análisis de Deserción de Clientes en una Empresa de Telecomun
 
 ---
 
-## **📊 Análisis de Churn en Clientes de Telecomunicaciones**  
+## **📊 Análisis de Deserción en Clientes de Telecomunicaciones**  
 
-Este repositorio contiene un análisis exploratorio de datos realizado con **Pandas** sobre un dataset de churn en clientes de telecomunicaciones. Se estudian factores relacionados con la deserción de clientes y su comportamiento en cuanto a llamadas y planes contratados.  
+Este repositorio contiene un análisis exploratorio de datos realizado con **Pandas** sobre un dataset de deserción (churn) en clientes de telecomunicaciones. Se estudian factores relacionados con la deserción de clientes y su comportamiento en cuanto a llamadas y planes contratados.  
 
 ### **📂 Contenido del repositorio**  
 - `taller_pandas_guia_2.ipynb`: Notebook con la solución del taller.  
