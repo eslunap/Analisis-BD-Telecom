@@ -1,0 +1,1596 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/eslunap/Analisis-BD-Telecom/blob/main/Solucion-guia-2\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# **Guía 2**\n",
+        "\n",
+        "Objetivo: aplicar los conceptos de Pandas en la manipulación y análisis de datos estructurados. Se trabajará con Series y DataFrames, aplicando técnicas de acceso, selección, filtrado y agregación de datos.\n",
+        "\n",
+        "### **Caso de Negocio: Análisis de Deserción de Clientes en una Empresa de Telecomunicaciones**\n",
+        "\n",
+        "**Contexto**\n",
+        "\n",
+        "En la industria de las telecomunicaciones, la retención de clientes es un factor crítico para la sostenibilidad del negocio. La competencia es feroz y adquirir nuevos clientes suele ser más costoso que mantener a los actuales. En este análisis, exploraremos un conjunto de datos que contiene información detallada sobre clientes que han abandonado el servicio (churn) y aquellos que permanecen activos.\n",
+        "\n",
+        "Nuestro objetivo es identificar los factores clave que influyen en la deserción, comprender patrones de comportamiento y generar estrategias efectivas para reducir la tasa de abandono.\n",
+        "\n",
+        "La empresa ha experimentado un aumento en la tasa de deserción de clientes, lo que ha provocado:\n",
+        "- Pérdida de ingresos recurrentes.\n",
+        "- Incremento en los costos de adquisición de nuevos clientes.\n",
+        "- Menor estabilidad en la base de clientes a largo plazo.\n",
+        "\n",
+        "Para abordar esta problemática, es crucial identificar las razones detrás de la deserción y desarrollar estrategias para mejorar la retención de clientes.\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "sVxeQki8vRXz"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Entrega del Trabajo**\n",
+        "\n",
+        "Los estudiantes deben trabajar en grupos de entre 2 y 4 personas. Cada grupo deberá subir su trabajo a un repositorio de GitHub, asegurándose de que el código y los archivos necesarios estén bien organizados y documentados. Posteriormente, deberán enviar el enlace del repositorio en la plataforma Canvas para su evaluación.\n",
+        "\n",
+        "Instrucciones para la entrega:\n",
+        "\n",
+        "Crear un repositorio en GitHub con un nombre descriptivo para el proyecto.\n",
+        "\n",
+        "Subir el código en Jupyter Notebook (.ipynb) o en formato Python (.py).\n",
+        "\n",
+        "Incluir un archivo README.md con una breve descripción del trabajo y las instrucciones de ejecución.\n",
+        "\n",
+        "Compartir el enlace del repositorio en Canvas dentro del plazo establecido.\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "TBsud25XSR0w"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Descripción de las variables del dataset telecom_churn**\n",
+        "\n",
+        "El dataset telecom_churn contiene información detallada sobre clientes de una empresa de telecomunicaciones, incluyendo datos generales, planes contratados, uso del servicio telefónico y llamadas al servicio al cliente. Su propósito principal es analizar patrones de deserción de clientes, identificados a través de la variable churn, que indica si un cliente ha abandonado la empresa (1) o sigue siendo cliente (0).\n",
+        "\n",
+        "Dentro del dataset, encontramos información general como el estado (state) donde reside el cliente, el código de área (area code), y el número de teléfono (phone number), aunque esta última variable no aporta información útil para el análisis, ya que es un identificador único.\n",
+        "\n",
+        "Además, el dataset registra el tiempo que un cliente ha estado en la empresa a través de la variable account length, lo que puede ayudar a analizar si la duración del contrato influye en la deserción. También se incluyen detalles sobre los planes contratados, como si el cliente tiene un plan internacional (international plan), que le permite realizar llamadas internacionales, o un buzón de voz (voice mail plan), que le permite recibir mensajes de voz.\n",
+        "\n",
+        "En cuanto al uso del servicio, se registran datos detallados sobre el tiempo en llamadas y los costos asociados. Se divide en tres períodos del día: diurno (total day minutes, total day calls, total day charge), vespertino (total eve minutes, total eve calls, total eve charge) y nocturno (total night minutes, total night calls, total night charge), lo que permite evaluar si hay patrones de consumo que influyen en la deserción. También se incluye información sobre el uso del servicio internacional, con variables como total intl minutes (minutos en llamadas internacionales), total intl calls (cantidad de llamadas internacionales) y total intl charge (costos por llamadas internacionales).\n",
+        "\n",
+        "Otro aspecto clave del dataset es el número de llamadas al servicio al cliente (customer service calls), ya que una mayor cantidad de llamadas puede indicar insatisfacción y estar relacionada con la decisión del cliente de abandonar la empresa.\n",
+        "\n",
+        "Finalmente, la variable más importante del análisis es churn, que indica si un cliente ha desertado de la empresa. A partir de esta variable, podemos analizar qué factores influyen en la deserción y encontrar patrones en los clientes que tienen mayor probabilidad de abandonar el servicio.\n"
+      ],
+      "metadata": {
+        "id": "R1eyqBGSScta"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Exploración y Limpieza de Datos**\n",
+        "\n",
+        "Cargar y explorar el dataset\n",
+        "\n",
+        "Importa Pandas y carga el dataset telecom_churn.csv en un DataFrame.\n",
+        "\n",
+        "Muestra las primeras 5 filas del DataFrame.\n",
+        "\n",
+        "Verifica cuántas filas y columnas tiene el dataset.\n",
+        "\n",
+        "Muestra información general del dataset, incluyendo los tipos de datos.\n",
+        "\n",
+        "Identifica si hay valores nulos en alguna columna."
+      ],
+      "metadata": {
+        "id": "-gqRGJ8yFs5Y"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "id": "wuoyvrE0vQ09",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "a4f6ae24-01e0-4f9e-af4c-34cf21d54417"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "2.2.2\n"
+          ]
+        }
+      ],
+      "source": [
+        "# Solución propuesta\n",
+        "import pandas as pd\n",
+        "\n",
+        "print(pd.__version__)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "os.getcwd()\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 36
+        },
+        "id": "lL_dTBGkbQY2",
+        "outputId": "407429a9-5d22-4700-c8ea-da522e3b5e63"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'/content'"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "string"
+            }
+          },
+          "metadata": {},
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "os.listdir()"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "98XE2v2jb6fG",
+        "outputId": "30caa0eb-81be-4d8e-e9a5-d2cca3c98d2c"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "['.config', 'sample_data']"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 3
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "os.makedirs(\"Guia 2\", exist_ok=True) # creamos la carpeta para cargar el archivo"
+      ],
+      "metadata": {
+        "id": "bBUSqYxdb_Rg"
+      },
+      "execution_count": 4,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# importamos la libreria pandas\n",
+        "import pandas as pd\n",
+        "df1 = pd.read_csv('/content/Guia 2/telecom_churn.csv') #cargamos el Datasheet en el un Dataframe llamado df1"
+      ],
+      "metadata": {
+        "id": "n_QdALmHcVNJ"
+      },
+      "execution_count": 5,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# mostramos las 5 primeras filas del Dataframe\n",
+        "df1.head(5)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 357
+        },
+        "id": "JtcpNI-4f91I",
+        "outputId": "fdbf3d30-d181-4584-e8a9-f71b909ed750"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "  state  account length  area code phone number international plan  \\\n",
+              "0    KS             128        415     382-4657                 no   \n",
+              "1    OH             107        415     371-7191                 no   \n",
+              "2    NJ             137        415     358-1921                 no   \n",
+              "3    OH              84        408     375-9999                yes   \n",
+              "4    OK              75        415     330-6626                yes   \n",
+              "\n",
+              "  voice mail plan  number vmail messages  total day minutes  total day calls  \\\n",
+              "0             yes                     25              265.1              110   \n",
+              "1             yes                     26              161.6              123   \n",
+              "2              no                      0              243.4              114   \n",
+              "3              no                      0              299.4               71   \n",
+              "4              no                      0              166.7              113   \n",
+              "\n",
+              "   total day charge  ...  total eve calls  total eve charge  \\\n",
+              "0             45.07  ...               99             16.78   \n",
+              "1             27.47  ...              103             16.62   \n",
+              "2             41.38  ...              110             10.30   \n",
+              "3             50.90  ...               88              5.26   \n",
+              "4             28.34  ...              122             12.61   \n",
+              "\n",
+              "   total night minutes  total night calls  total night charge  \\\n",
+              "0                244.7                 91               11.01   \n",
+              "1                254.4                103               11.45   \n",
+              "2                162.6                104                7.32   \n",
+              "3                196.9                 89                8.86   \n",
+              "4                186.9                121                8.41   \n",
+              "\n",
+              "   total intl minutes  total intl calls  total intl charge  \\\n",
+              "0                10.0                 3               2.70   \n",
+              "1                13.7                 3               3.70   \n",
+              "2                12.2                 5               3.29   \n",
+              "3                 6.6                 7               1.78   \n",
+              "4                10.1                 3               2.73   \n",
+              "\n",
+              "   customer service calls  churn  \n",
+              "0                       1  False  \n",
+              "1                       1  False  \n",
+              "2                       0  False  \n",
+              "3                       2  False  \n",
+              "4                       3  False  \n",
+              "\n",
+              "[5 rows x 21 columns]"
+            ],
+            "text/html": [
+              "\n",
+              "  <div id=\"df-26be85dd-5dc7-4d00-b3f3-9a072b1e082e\" class=\"colab-df-container\">\n",
+              "    <div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>state</th>\n",
+              "      <th>account length</th>\n",
+              "      <th>area code</th>\n",
+              "      <th>phone number</th>\n",
+              "      <th>international plan</th>\n",
+              "      <th>voice mail plan</th>\n",
+              "      <th>number vmail messages</th>\n",
+              "      <th>total day minutes</th>\n",
+              "      <th>total day calls</th>\n",
+              "      <th>total day charge</th>\n",
+              "      <th>...</th>\n",
+              "      <th>total eve calls</th>\n",
+              "      <th>total eve charge</th>\n",
+              "      <th>total night minutes</th>\n",
+              "      <th>total night calls</th>\n",
+              "      <th>total night charge</th>\n",
+              "      <th>total intl minutes</th>\n",
+              "      <th>total intl calls</th>\n",
+              "      <th>total intl charge</th>\n",
+              "      <th>customer service calls</th>\n",
+              "      <th>churn</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>KS</td>\n",
+              "      <td>128</td>\n",
+              "      <td>415</td>\n",
+              "      <td>382-4657</td>\n",
+              "      <td>no</td>\n",
+              "      <td>yes</td>\n",
+              "      <td>25</td>\n",
+              "      <td>265.1</td>\n",
+              "      <td>110</td>\n",
+              "      <td>45.07</td>\n",
+              "      <td>...</td>\n",
+              "      <td>99</td>\n",
+              "      <td>16.78</td>\n",
+              "      <td>244.7</td>\n",
+              "      <td>91</td>\n",
+              "      <td>11.01</td>\n",
+              "      <td>10.0</td>\n",
+              "      <td>3</td>\n",
+              "      <td>2.70</td>\n",
+              "      <td>1</td>\n",
+              "      <td>False</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>OH</td>\n",
+              "      <td>107</td>\n",
+              "      <td>415</td>\n",
+              "      <td>371-7191</td>\n",
+              "      <td>no</td>\n",
+              "      <td>yes</td>\n",
+              "      <td>26</td>\n",
+              "      <td>161.6</td>\n",
+              "      <td>123</td>\n",
+              "      <td>27.47</td>\n",
+              "      <td>...</td>\n",
+              "      <td>103</td>\n",
+              "      <td>16.62</td>\n",
+              "      <td>254.4</td>\n",
+              "      <td>103</td>\n",
+              "      <td>11.45</td>\n",
+              "      <td>13.7</td>\n",
+              "      <td>3</td>\n",
+              "      <td>3.70</td>\n",
+              "      <td>1</td>\n",
+              "      <td>False</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>NJ</td>\n",
+              "      <td>137</td>\n",
+              "      <td>415</td>\n",
+              "      <td>358-1921</td>\n",
+              "      <td>no</td>\n",
+              "      <td>no</td>\n",
+              "      <td>0</td>\n",
+              "      <td>243.4</td>\n",
+              "      <td>114</td>\n",
+              "      <td>41.38</td>\n",
+              "      <td>...</td>\n",
+              "      <td>110</td>\n",
+              "      <td>10.30</td>\n",
+              "      <td>162.6</td>\n",
+              "      <td>104</td>\n",
+              "      <td>7.32</td>\n",
+              "      <td>12.2</td>\n",
+              "      <td>5</td>\n",
+              "      <td>3.29</td>\n",
+              "      <td>0</td>\n",
+              "      <td>False</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>OH</td>\n",
+              "      <td>84</td>\n",
+              "      <td>408</td>\n",
+              "      <td>375-9999</td>\n",
+              "      <td>yes</td>\n",
+              "      <td>no</td>\n",
+              "      <td>0</td>\n",
+              "      <td>299.4</td>\n",
+              "      <td>71</td>\n",
+              "      <td>50.90</td>\n",
+              "      <td>...</td>\n",
+              "      <td>88</td>\n",
+              "      <td>5.26</td>\n",
+              "      <td>196.9</td>\n",
+              "      <td>89</td>\n",
+              "      <td>8.86</td>\n",
+              "      <td>6.6</td>\n",
+              "      <td>7</td>\n",
+              "      <td>1.78</td>\n",
+              "      <td>2</td>\n",
+              "      <td>False</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>OK</td>\n",
+              "      <td>75</td>\n",
+              "      <td>415</td>\n",
+              "      <td>330-6626</td>\n",
+              "      <td>yes</td>\n",
+              "      <td>no</td>\n",
+              "      <td>0</td>\n",
+              "      <td>166.7</td>\n",
+              "      <td>113</td>\n",
+              "      <td>28.34</td>\n",
+              "      <td>...</td>\n",
+              "      <td>122</td>\n",
+              "      <td>12.61</td>\n",
+              "      <td>186.9</td>\n",
+              "      <td>121</td>\n",
+              "      <td>8.41</td>\n",
+              "      <td>10.1</td>\n",
+              "      <td>3</td>\n",
+              "      <td>2.73</td>\n",
+              "      <td>3</td>\n",
+              "      <td>False</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>5 rows × 21 columns</p>\n",
+              "</div>\n",
+              "    <div class=\"colab-df-buttons\">\n",
+              "\n",
+              "  <div class=\"colab-df-container\">\n",
+              "    <button class=\"colab-df-convert\" onclick=\"convertToInteractive('df-26be85dd-5dc7-4d00-b3f3-9a072b1e082e')\"\n",
+              "            title=\"Convert this dataframe to an interactive table.\"\n",
+              "            style=\"display:none;\">\n",
+              "\n",
+              "  <svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\">\n",
+              "    <path d=\"M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z\"/>\n",
+              "  </svg>\n",
+              "    </button>\n",
+              "\n",
+              "  <style>\n",
+              "    .colab-df-container {\n",
+              "      display:flex;\n",
+              "      gap: 12px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert {\n",
+              "      background-color: #E8F0FE;\n",
+              "      border: none;\n",
+              "      border-radius: 50%;\n",
+              "      cursor: pointer;\n",
+              "      display: none;\n",
+              "      fill: #1967D2;\n",
+              "      height: 32px;\n",
+              "      padding: 0 0 0 0;\n",
+              "      width: 32px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert:hover {\n",
+              "      background-color: #E2EBFA;\n",
+              "      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);\n",
+              "      fill: #174EA6;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-buttons div {\n",
+              "      margin-bottom: 4px;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert {\n",
+              "      background-color: #3B4455;\n",
+              "      fill: #D2E3FC;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert:hover {\n",
+              "      background-color: #434B5C;\n",
+              "      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);\n",
+              "      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));\n",
+              "      fill: #FFFFFF;\n",
+              "    }\n",
+              "  </style>\n",
+              "\n",
+              "    <script>\n",
+              "      const buttonEl =\n",
+              "        document.querySelector('#df-26be85dd-5dc7-4d00-b3f3-9a072b1e082e button.colab-df-convert');\n",
+              "      buttonEl.style.display =\n",
+              "        google.colab.kernel.accessAllowed ? 'block' : 'none';\n",
+              "\n",
+              "      async function convertToInteractive(key) {\n",
+              "        const element = document.querySelector('#df-26be85dd-5dc7-4d00-b3f3-9a072b1e082e');\n",
+              "        const dataTable =\n",
+              "          await google.colab.kernel.invokeFunction('convertToInteractive',\n",
+              "                                                    [key], {});\n",
+              "        if (!dataTable) return;\n",
+              "\n",
+              "        const docLinkHtml = 'Like what you see? Visit the ' +\n",
+              "          '<a target=\"_blank\" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'\n",
+              "          + ' to learn more about interactive tables.';\n",
+              "        element.innerHTML = '';\n",
+              "        dataTable['output_type'] = 'display_data';\n",
+              "        await google.colab.output.renderOutput(dataTable, element);\n",
+              "        const docLink = document.createElement('div');\n",
+              "        docLink.innerHTML = docLinkHtml;\n",
+              "        element.appendChild(docLink);\n",
+              "      }\n",
+              "    </script>\n",
+              "  </div>\n",
+              "\n",
+              "\n",
+              "<div id=\"df-64eddd5d-d2ec-4b3e-8a2a-a9ad4d6dbacb\">\n",
+              "  <button class=\"colab-df-quickchart\" onclick=\"quickchart('df-64eddd5d-d2ec-4b3e-8a2a-a9ad4d6dbacb')\"\n",
+              "            title=\"Suggest charts\"\n",
+              "            style=\"display:none;\">\n",
+              "\n",
+              "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\"viewBox=\"0 0 24 24\"\n",
+              "     width=\"24px\">\n",
+              "    <g>\n",
+              "        <path d=\"M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z\"/>\n",
+              "    </g>\n",
+              "</svg>\n",
+              "  </button>\n",
+              "\n",
+              "<style>\n",
+              "  .colab-df-quickchart {\n",
+              "      --bg-color: #E8F0FE;\n",
+              "      --fill-color: #1967D2;\n",
+              "      --hover-bg-color: #E2EBFA;\n",
+              "      --hover-fill-color: #174EA6;\n",
+              "      --disabled-fill-color: #AAA;\n",
+              "      --disabled-bg-color: #DDD;\n",
+              "  }\n",
+              "\n",
+              "  [theme=dark] .colab-df-quickchart {\n",
+              "      --bg-color: #3B4455;\n",
+              "      --fill-color: #D2E3FC;\n",
+              "      --hover-bg-color: #434B5C;\n",
+              "      --hover-fill-color: #FFFFFF;\n",
+              "      --disabled-bg-color: #3B4455;\n",
+              "      --disabled-fill-color: #666;\n",
+              "  }\n",
+              "\n",
+              "  .colab-df-quickchart {\n",
+              "    background-color: var(--bg-color);\n",
+              "    border: none;\n",
+              "    border-radius: 50%;\n",
+              "    cursor: pointer;\n",
+              "    display: none;\n",
+              "    fill: var(--fill-color);\n",
+              "    height: 32px;\n",
+              "    padding: 0;\n",
+              "    width: 32px;\n",
+              "  }\n",
+              "\n",
+              "  .colab-df-quickchart:hover {\n",
+              "    background-color: var(--hover-bg-color);\n",
+              "    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);\n",
+              "    fill: var(--button-hover-fill-color);\n",
+              "  }\n",
+              "\n",
+              "  .colab-df-quickchart-complete:disabled,\n",
+              "  .colab-df-quickchart-complete:disabled:hover {\n",
+              "    background-color: var(--disabled-bg-color);\n",
+              "    fill: var(--disabled-fill-color);\n",
+              "    box-shadow: none;\n",
+              "  }\n",
+              "\n",
+              "  .colab-df-spinner {\n",
+              "    border: 2px solid var(--fill-color);\n",
+              "    border-color: transparent;\n",
+              "    border-bottom-color: var(--fill-color);\n",
+              "    animation:\n",
+              "      spin 1s steps(1) infinite;\n",
+              "  }\n",
+              "\n",
+              "  @keyframes spin {\n",
+              "    0% {\n",
+              "      border-color: transparent;\n",
+              "      border-bottom-color: var(--fill-color);\n",
+              "      border-left-color: var(--fill-color);\n",
+              "    }\n",
+              "    20% {\n",
+              "      border-color: transparent;\n",
+              "      border-left-color: var(--fill-color);\n",
+              "      border-top-color: var(--fill-color);\n",
+              "    }\n",
+              "    30% {\n",
+              "      border-color: transparent;\n",
+              "      border-left-color: var(--fill-color);\n",
+              "      border-top-color: var(--fill-color);\n",
+              "      border-right-color: var(--fill-color);\n",
+              "    }\n",
+              "    40% {\n",
+              "      border-color: transparent;\n",
+              "      border-right-color: var(--fill-color);\n",
+              "      border-top-color: var(--fill-color);\n",
+              "    }\n",
+              "    60% {\n",
+              "      border-color: transparent;\n",
+              "      border-right-color: var(--fill-color);\n",
+              "    }\n",
+              "    80% {\n",
+              "      border-color: transparent;\n",
+              "      border-right-color: var(--fill-color);\n",
+              "      border-bottom-color: var(--fill-color);\n",
+              "    }\n",
+              "    90% {\n",
+              "      border-color: transparent;\n",
+              "      border-bottom-color: var(--fill-color);\n",
+              "    }\n",
+              "  }\n",
+              "</style>\n",
+              "\n",
+              "  <script>\n",
+              "    async function quickchart(key) {\n",
+              "      const quickchartButtonEl =\n",
+              "        document.querySelector('#' + key + ' button');\n",
+              "      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.\n",
+              "      quickchartButtonEl.classList.add('colab-df-spinner');\n",
+              "      try {\n",
+              "        const charts = await google.colab.kernel.invokeFunction(\n",
+              "            'suggestCharts', [key], {});\n",
+              "      } catch (error) {\n",
+              "        console.error('Error during call to suggestCharts:', error);\n",
+              "      }\n",
+              "      quickchartButtonEl.classList.remove('colab-df-spinner');\n",
+              "      quickchartButtonEl.classList.add('colab-df-quickchart-complete');\n",
+              "    }\n",
+              "    (() => {\n",
+              "      let quickchartButtonEl =\n",
+              "        document.querySelector('#df-64eddd5d-d2ec-4b3e-8a2a-a9ad4d6dbacb button');\n",
+              "      quickchartButtonEl.style.display =\n",
+              "        google.colab.kernel.accessAllowed ? 'block' : 'none';\n",
+              "    })();\n",
+              "  </script>\n",
+              "</div>\n",
+              "\n",
+              "    </div>\n",
+              "  </div>\n"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "dataframe",
+              "variable_name": "df1"
+            }
+          },
+          "metadata": {},
+          "execution_count": 8
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df1.shape #mostramos cuantas filas y columnas tiene el dataframe df1"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "8cP85dewhGix",
+        "outputId": "449ee0fd-408a-45a1-fe2c-94d5e7c0bb23"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "(3333, 21)"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 8
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# información general del Dataframe\n",
+        "\n",
+        "type(df1)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 204
+        },
+        "id": "t8vIni8T6SO6",
+        "outputId": "f2eee945-245a-45de-97be-8b5b1e8de36f"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "pandas.core.frame.DataFrame"
+            ],
+            "text/html": [
+              "<div style=\"max-width:800px; border: 1px solid var(--colab-border-color);\"><style>\n",
+              "      pre.function-repr-contents {\n",
+              "        overflow-x: auto;\n",
+              "        padding: 8px 12px;\n",
+              "        max-height: 500px;\n",
+              "      }\n",
+              "\n",
+              "      pre.function-repr-contents.function-repr-contents-collapsed {\n",
+              "        cursor: pointer;\n",
+              "        max-height: 100px;\n",
+              "      }\n",
+              "    </style>\n",
+              "    <pre style=\"white-space: initial; background:\n",
+              "         var(--colab-secondary-surface-color); padding: 8px 12px;\n",
+              "         border-bottom: 1px solid var(--colab-border-color);\"><b>pandas.core.frame.DataFrame</b><br/>def __init__(data=None, index: Axes | None=None, columns: Axes | None=None, dtype: Dtype | None=None, copy: bool | None=None) -&gt; None</pre><pre class=\"function-repr-contents function-repr-contents-collapsed\" style=\"\"><a class=\"filepath\" style=\"display:none\" href=\"#\">/usr/local/lib/python3.11/dist-packages/pandas/core/frame.py</a>Two-dimensional, size-mutable, potentially heterogeneous tabular data.\n",
+              "\n",
+              "Data structure also contains labeled axes (rows and columns).\n",
+              "Arithmetic operations align on both row and column labels. Can be\n",
+              "thought of as a dict-like container for Series objects. The primary\n",
+              "pandas data structure.\n",
+              "\n",
+              "Parameters\n",
+              "----------\n",
+              "data : ndarray (structured or homogeneous), Iterable, dict, or DataFrame\n",
+              "    Dict can contain Series, arrays, constants, dataclass or list-like objects. If\n",
+              "    data is a dict, column order follows insertion-order. If a dict contains Series\n",
+              "    which have an index defined, it is aligned by its index. This alignment also\n",
+              "    occurs if data is a Series or a DataFrame itself. Alignment is done on\n",
+              "    Series/DataFrame inputs.\n",
+              "\n",
+              "    If data is a list of dicts, column order follows insertion-order.\n",
+              "\n",
+              "index : Index or array-like\n",
+              "    Index to use for resulting frame. Will default to RangeIndex if\n",
+              "    no indexing information part of input data and no index provided.\n",
+              "columns : Index or array-like\n",
+              "    Column labels to use for resulting frame when data does not have them,\n",
+              "    defaulting to RangeIndex(0, 1, 2, ..., n). If data contains column labels,\n",
+              "    will perform column selection instead.\n",
+              "dtype : dtype, default None\n",
+              "    Data type to force. Only a single dtype is allowed. If None, infer.\n",
+              "copy : bool or None, default None\n",
+              "    Copy data from inputs.\n",
+              "    For dict data, the default of None behaves like ``copy=True``.  For DataFrame\n",
+              "    or 2d ndarray input, the default of None behaves like ``copy=False``.\n",
+              "    If data is a dict containing one or more Series (possibly of different dtypes),\n",
+              "    ``copy=False`` will ensure that these inputs are not copied.\n",
+              "\n",
+              "    .. versionchanged:: 1.3.0\n",
+              "\n",
+              "See Also\n",
+              "--------\n",
+              "DataFrame.from_records : Constructor from tuples, also record arrays.\n",
+              "DataFrame.from_dict : From dicts of Series, arrays, or dicts.\n",
+              "read_csv : Read a comma-separated values (csv) file into DataFrame.\n",
+              "read_table : Read general delimited file into DataFrame.\n",
+              "read_clipboard : Read text from clipboard into DataFrame.\n",
+              "\n",
+              "Notes\n",
+              "-----\n",
+              "Please reference the :ref:`User Guide &lt;basics.dataframe&gt;` for more information.\n",
+              "\n",
+              "Examples\n",
+              "--------\n",
+              "Constructing DataFrame from a dictionary.\n",
+              "\n",
+              "&gt;&gt;&gt; d = {&#x27;col1&#x27;: [1, 2], &#x27;col2&#x27;: [3, 4]}\n",
+              "&gt;&gt;&gt; df = pd.DataFrame(data=d)\n",
+              "&gt;&gt;&gt; df\n",
+              "   col1  col2\n",
+              "0     1     3\n",
+              "1     2     4\n",
+              "\n",
+              "Notice that the inferred dtype is int64.\n",
+              "\n",
+              "&gt;&gt;&gt; df.dtypes\n",
+              "col1    int64\n",
+              "col2    int64\n",
+              "dtype: object\n",
+              "\n",
+              "To enforce a single dtype:\n",
+              "\n",
+              "&gt;&gt;&gt; df = pd.DataFrame(data=d, dtype=np.int8)\n",
+              "&gt;&gt;&gt; df.dtypes\n",
+              "col1    int8\n",
+              "col2    int8\n",
+              "dtype: object\n",
+              "\n",
+              "Constructing DataFrame from a dictionary including Series:\n",
+              "\n",
+              "&gt;&gt;&gt; d = {&#x27;col1&#x27;: [0, 1, 2, 3], &#x27;col2&#x27;: pd.Series([2, 3], index=[2, 3])}\n",
+              "&gt;&gt;&gt; pd.DataFrame(data=d, index=[0, 1, 2, 3])\n",
+              "   col1  col2\n",
+              "0     0   NaN\n",
+              "1     1   NaN\n",
+              "2     2   2.0\n",
+              "3     3   3.0\n",
+              "\n",
+              "Constructing DataFrame from numpy ndarray:\n",
+              "\n",
+              "&gt;&gt;&gt; df2 = pd.DataFrame(np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]),\n",
+              "...                    columns=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;])\n",
+              "&gt;&gt;&gt; df2\n",
+              "   a  b  c\n",
+              "0  1  2  3\n",
+              "1  4  5  6\n",
+              "2  7  8  9\n",
+              "\n",
+              "Constructing DataFrame from a numpy ndarray that has labeled columns:\n",
+              "\n",
+              "&gt;&gt;&gt; data = np.array([(1, 2, 3), (4, 5, 6), (7, 8, 9)],\n",
+              "...                 dtype=[(&quot;a&quot;, &quot;i4&quot;), (&quot;b&quot;, &quot;i4&quot;), (&quot;c&quot;, &quot;i4&quot;)])\n",
+              "&gt;&gt;&gt; df3 = pd.DataFrame(data, columns=[&#x27;c&#x27;, &#x27;a&#x27;])\n",
+              "...\n",
+              "&gt;&gt;&gt; df3\n",
+              "   c  a\n",
+              "0  3  1\n",
+              "1  6  4\n",
+              "2  9  7\n",
+              "\n",
+              "Constructing DataFrame from dataclass:\n",
+              "\n",
+              "&gt;&gt;&gt; from dataclasses import make_dataclass\n",
+              "&gt;&gt;&gt; Point = make_dataclass(&quot;Point&quot;, [(&quot;x&quot;, int), (&quot;y&quot;, int)])\n",
+              "&gt;&gt;&gt; pd.DataFrame([Point(0, 0), Point(0, 3), Point(2, 3)])\n",
+              "   x  y\n",
+              "0  0  0\n",
+              "1  0  3\n",
+              "2  2  3\n",
+              "\n",
+              "Constructing DataFrame from Series/DataFrame:\n",
+              "\n",
+              "&gt;&gt;&gt; ser = pd.Series([1, 2, 3], index=[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])\n",
+              "&gt;&gt;&gt; df = pd.DataFrame(data=ser, index=[&quot;a&quot;, &quot;c&quot;])\n",
+              "&gt;&gt;&gt; df\n",
+              "   0\n",
+              "a  1\n",
+              "c  3\n",
+              "\n",
+              "&gt;&gt;&gt; df1 = pd.DataFrame([1, 2, 3], index=[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;], columns=[&quot;x&quot;])\n",
+              "&gt;&gt;&gt; df2 = pd.DataFrame(data=df1, index=[&quot;a&quot;, &quot;c&quot;])\n",
+              "&gt;&gt;&gt; df2\n",
+              "   x\n",
+              "a  1\n",
+              "c  3</pre>\n",
+              "      <script>\n",
+              "      if (google.colab.kernel.accessAllowed && google.colab.files && google.colab.files.view) {\n",
+              "        for (const element of document.querySelectorAll('.filepath')) {\n",
+              "          element.style.display = 'block'\n",
+              "          element.onclick = (event) => {\n",
+              "            event.preventDefault();\n",
+              "            event.stopPropagation();\n",
+              "            google.colab.files.view(element.textContent, 509);\n",
+              "          };\n",
+              "        }\n",
+              "      }\n",
+              "      for (const element of document.querySelectorAll('.function-repr-contents')) {\n",
+              "        element.onclick = (event) => {\n",
+              "          event.preventDefault();\n",
+              "          event.stopPropagation();\n",
+              "          element.classList.toggle('function-repr-contents-collapsed');\n",
+              "        };\n",
+              "      }\n",
+              "      </script>\n",
+              "      </div>"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 10
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# identificar valores nulos en alguna columna\n",
+        "\n",
+        "print(\" Valores nulos en cada columna:\")\n",
+        "print(df1.isnull().sum())"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "I85n6NwC7FAE",
+        "outputId": "ca03ade9-75bb-43cb-d99c-6df3fc66749b"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            " Valores nulos en cada columna:\n",
+            "state                     0\n",
+            "account length            0\n",
+            "area code                 0\n",
+            "phone number              0\n",
+            "international plan        0\n",
+            "voice mail plan           0\n",
+            "number vmail messages     0\n",
+            "total day minutes         0\n",
+            "total day calls           0\n",
+            "total day charge          0\n",
+            "total eve minutes         0\n",
+            "total eve calls           0\n",
+            "total eve charge          0\n",
+            "total night minutes       0\n",
+            "total night calls         0\n",
+            "total night charge        0\n",
+            "total intl minutes        0\n",
+            "total intl calls          0\n",
+            "total intl charge         0\n",
+            "customer service calls    0\n",
+            "churn                     0\n",
+            "dtype: int64\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Análisis de Churn y Factores Relacionados**\n",
+        "\n",
+        "Calcula el porcentaje de clientes que han desertado (churn = 1).\n",
+        "\n",
+        "Identifica si los clientes con plan internacional (international plan) tienen mayor tasa de deserción.\n",
+        "\n",
+        "Identifica si los clientes con buzón de voz (voice mail plan) tienen menor tasa de deserción."
+      ],
+      "metadata": {
+        "id": "PIGXq-ijFgb4"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Solución propuesta\n",
+        "#Calculo de porcentaje de clientes desertores\n",
+        "clientes_desertores = df1['churn'].sum()\n",
+        "porcentaje_desertores = (clientes_desertores / len(df1)) * 100\n",
+        "\n",
+        "print(\"El total de clientes es: \", len(df1))\n",
+        "print(\"El total de clientes desertores es: \",clientes_desertores)\n",
+        "print(\"El porcentaje de clientes desertores es: \",round(porcentaje_desertores, 2), \"%\")\n"
+      ],
+      "metadata": {
+        "id": "3_TFqdwBwUD-",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "6e83716a-edd6-490e-fc5b-0617c304403e"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "El total de clientes es:  3333\n",
+            "El total de clientes desertores es:  483\n",
+            "El porcentaje de clientes desertores es:  14.49 %\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Identifica si los clientes con plan internacional (international plan) tienen mayor tasa de deserción.\n",
+        "# determinamos el total de clientes con plan internacional\n",
+        "clientes_int = (df1['international plan'] == \"yes\").sum()\n",
+        "print(\"Clientes con plan internacional: \",clientes_int)\n",
+        "clientes_noint = (df1['international plan'] == \"no\").sum()\n",
+        "print(\"Clientes sin plan internacional: \",clientes_noint)\n",
+        "\n",
+        "# determinamos de estos clientes cuantos han desertado y cuantos no\n",
+        "clientes_int_desertores = ((df1['international plan'] == \"yes\") & (df1['churn'] == True)).sum()\n",
+        "clientes_int_nodesertores = ((df1['international plan'] == \"yes\") & (df1['churn'] == False)).sum()\n",
+        "clientes_noint_desertores = ((df1['international plan'] == \"no\") & (df1['churn'] == True)).sum()\n",
+        "clientes_noint_nodesertores = ((df1['international plan'] == \"no\") & (df1['churn'] == False)).sum()\n",
+        "\n",
+        "print(\"\\nClientes con plan internacional y desertores: \",clientes_int_desertores)\n",
+        "print(\"Clientes con plan internacional y no desertores: \",clientes_int_nodesertores)\n",
+        "print(\"Clientes sin plan internacional y desertores: \",clientes_noint_desertores)\n",
+        "print(\"Clientes sin plan internacional y no desertores: \",clientes_noint_nodesertores)\n",
+        "\n",
+        "# Determinamos el % de deserción para clientes inter y no inter\n",
+        "tasa_int_desert = (clientes_int_desertores / clientes_int) * 100\n",
+        "print(\"\\nTasa de desertores con plan internacional: \",round(tasa_int_desert, 2), \"%\")\n",
+        "tasa_noint_desert = (clientes_noint_desertores / clientes_noint) * 100\n",
+        "print(\"Tasa de desertores sin plan internacional: \",round(tasa_noint_desert, 2), \"%\")\n",
+        "\n",
+        "if tasa_int_desert > tasa_noint_desert:\n",
+        "  print(\"\\nLos clientes con plan internacional tienen mayor tasa de deserción\")\n",
+        "else:\n",
+        "  print(\"\\nLos clientes sin plan internacional tienen mayor tasa de deserción\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "jDmUD_DVIVgo",
+        "outputId": "99f40d0c-93af-4db4-f805-4e1cb52ab29e"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Clientes con plan internacional:  323\n",
+            "Clientes sin plan internacional:  3010\n",
+            "\n",
+            "Clientes con plan internacional y desertores:  137\n",
+            "Clientes con plan internacional y no desertores:  186\n",
+            "Clientes sin plan internacional y desertores:  346\n",
+            "Clientes sin plan internacional y no desertores:  2664\n",
+            "\n",
+            "Tasa de desertores con plan internacional:  42.41 %\n",
+            "Tasa de desertores sin plan internacional:  11.5 %\n",
+            "\n",
+            "Los clientes con plan internacional tienen mayor tasa de deserción\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Identifica si los clientes con buzón de voz (voice mail plan) tienen menor tasa de deserción.\n",
+        "  # determinamos el total de clientes con buzon de voz\n",
+        "clientes_buzon = (df1['voice mail plan'] == \"yes\").sum()\n",
+        "print(\"Clientes con buzon de voz: \",clientes_buzon)\n",
+        "clientes_nobuzon = (df1['voice mail plan'] == \"no\").sum()\n",
+        "print(\"Clientes sin buzon de voz: \",clientes_nobuzon)\n",
+        "\n",
+        "# determinamos de estos clientes cuantos han desertado y cuantos no\n",
+        "clientes_buzon_desertores = ((df1['voice mail plan'] == \"yes\") & (df1['churn'] == True)).sum()\n",
+        "clientes_buzon_nodesertores = ((df1['voice mail plan'] == \"yes\") & (df1['churn'] == False)).sum()\n",
+        "clientes_nobuzon_desertores = ((df1['voice mail plan'] == \"no\") & (df1['churn'] == True)).sum()\n",
+        "clientes_nobuzon_nodesertores = ((df1['voice mail plan'] == \"no\") & (df1['churn'] == False)).sum()\n",
+        "\n",
+        "print(\"\\nClientes con buzon de voz y desertores: \",clientes_buzon_desertores)\n",
+        "print(\"Clientes con buzon de voz y no desertores: \",clientes_buzon_nodesertores)\n",
+        "print(\"Clientes sin buzon de voz y desertores: \",clientes_nobuzon_desertores)\n",
+        "print(\"Clientes sin buzon de voz y no desertores: \",clientes_nobuzon_nodesertores)\n",
+        "\n",
+        "# Determinamos el % de deserción para clientes buzon y no buzon\n",
+        "tasa_buzon_desert = (clientes_buzon_desertores / clientes_buzon) * 100\n",
+        "print(\"\\nTasa de desertores con plan buzon de voz: \",round(tasa_buzon_desert, 2), \"%\")\n",
+        "tasa_nobuzon_desert = (clientes_nobuzon_desertores / clientes_nobuzon) * 100\n",
+        "print(\"Tasa de desertores sin plan buzon de voz: \",round(tasa_nobuzon_desert, 2), \"%\")\n",
+        "\n",
+        "if tasa_buzon_desert > tasa_nobuzon_desert:\n",
+        "  print(\"\\nLos clientes con plan buzon de voz tienen mayor tasa de deserción\")\n",
+        "else:\n",
+        "  print(\"\\nLos clientes sin plan buzon de voz tienen mayor tasa de deserción\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "DpeDEoxUi71A",
+        "outputId": "52e4ca26-58d8-4094-d6ef-7d1fb0654358"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Clientes con buzon de voz:  922\n",
+            "Clientes sin buzon de voz:  2411\n",
+            "\n",
+            "Clientes con buzon de voz y desertores:  80\n",
+            "Clientes con buzon de voz y no desertores:  842\n",
+            "Clientes sin buzon de voz y desertores:  403\n",
+            "Clientes sin buzon de voz y no desertores:  2008\n",
+            "\n",
+            "Tasa de desertores con plan buzon de voz:  8.68 %\n",
+            "Tasa de desertores sin plan buzon de voz:  16.72 %\n",
+            "\n",
+            "Los clientes sin plan buzon de voz tienen mayor tasa de deserción\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Análisis de la Duración del Servicio y Deserción**\n",
+        "\n",
+        "¿Cuál es la duración promedio de la cuenta (account length) entre clientes que desertaron y los que permanecen?\n",
+        "\n",
+        "¿Los clientes con cuentas más antiguas tienen más probabilidades de desertar?"
+      ],
+      "metadata": {
+        "id": "yL8Y_juFFup7"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# ¿Cuál es la duración promedio de la cuenta (account length) entre clientes que desertaron y los que permanecen?\n",
+        "\n",
+        "# Asignamos a una variable el valor del promedio para los elementos filtrado por desertores\n",
+        "promedio_desertores = df1[df1['churn'] == True]['account length'].mean()\n",
+        "print(\"El promedio de cuenta de clientes que desertaron es: \",round(promedio_desertores, 2))\n",
+        "\n",
+        "# Asignamos a una variable el valor del promedio para los elementos filtrado por no desertores\n",
+        "promedio_no_desertores = df1[df1['churn'] == False]['account length'].mean()\n",
+        "print(\"El promedio de cuenta de clientes que permanecen es: \",round(promedio_no_desertores, 2))\n"
+      ],
+      "metadata": {
+        "id": "7ViU0n6lGFao",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "468ba622-5b08-4a7a-b8ce-cad8e6796318"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "El promedio de cuenta de clientes que desertaron es:  102.66\n",
+            "El promedio de cuenta de clientes que permanecen es:  100.79\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Determinar el punto de corte para cuentas antiguas y nuevas (usando la media)\n",
+        "threshold = df1[\"account length\"].mean()\n",
+        "\n",
+        "# Calcular la probabilidad de deserción de clientes antiguos y nuevos\n",
+        "churn_rate_old = df1[df1[\"account length\"] >= threshold][\"churn\"].mean() * 100\n",
+        "churn_rate_new = df1[df1[\"account length\"] < threshold][\"churn\"].mean() * 100\n",
+        "\n",
+        "# Imprimir resultados específicos\n",
+        "print(f\"\\nProbabilidad de deserción en clientes con cuentas más antiguas: {churn_rate_old:.2f}%\")\n",
+        "print(f\"Probabilidad de deserción en clientes con cuentas más nuevas: {churn_rate_new:.2f}%\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "le1oXN5_-DFy",
+        "outputId": "44e57257-2c78-48be-f83a-073007c5e5d2"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Probabilidad de deserción en clientes con cuentas más antiguas: 14.98%\n",
+            "Probabilidad de deserción en clientes con cuentas más nuevas: 14.03%\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Relación entre Deserción y Uso del Servicio**\n",
+        "\n",
+        "Compara la cantidad de minutos usados en llamadas diurnas (total day minutes) entre clientes con y sin churn.\n",
+        "\n",
+        "Compara la cantidad de minutos usados en llamadas nocturnas (total night minutes).\n",
+        "\n",
+        "Compara el número total de llamadas (total day calls) entre clientes con y sin churn."
+      ],
+      "metadata": {
+        "id": "vyaa82K0GF6B"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Compara la cantidad de minutos usados en llamadas diurnas (total day minutes) entre clientes con y sin churn\n",
+        "\n",
+        "# Asignamos a una variable el total de minutos para los elementos filtrado por desertores\n",
+        "total_minutos_desertores = df1[df1['churn'] == True]['total day minutes'].sum()\n",
+        "print(\"El total de minutos usados por clientes que desertaron es: \",round(total_minutos_desertores, 2))\n",
+        "total_minutos_no_desertores = df1[df1['churn'] == False]['total day minutes'].sum()\n",
+        "print(\"El total de minutos usados por clientes que permanecen es: \",round(total_minutos_no_desertores, 2))\n",
+        "\n",
+        "if total_minutos_desertores > total_minutos_no_desertores:\n",
+        "  print(\"\\nLos clientes que desertaron tienen más minutos usados en llamadas diurnas\")\n",
+        "else:\n",
+        "  print(\"\\nLos clientes que permanecen tienen más minutos usados en llamadas diurnas\")"
+      ],
+      "metadata": {
+        "id": "d4aPKcv2GrpL",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "6b9c60a6-0951-4945-fd4a-c3e94751f223"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "El total de minutos usados por clientes que desertaron es:  99939.5\n",
+            "El total de minutos usados por clientes que permanecen es:  499250.9\n",
+            "\n",
+            "Los clientes que permanecen tienen más minutos usados en llamadas diurnas\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Compara la cantidad de minutos usados en llamadas nocturnas (total night minutes) entre clientes con y sin churn\n",
+        "\n",
+        "total_minutos_nocturnos_desertores = df1[df1['churn'] == True]['total night minutes'].sum()\n",
+        "print(\"El total de minutos usados por clientes que desertaron en llamadas nocturnas es: \",round(total_minutos_nocturnos_desertores, 2))\n",
+        "total_minutos_nocturnos_no_desertores = df1[df1['churn'] == False]['total night minutes'].sum()\n",
+        "print(\"El total de minutos usados por clientes que permanecen en llamadas nocturnas es: \",round(total_minutos_nocturnos_no_desertores, 2))\n",
+        "\n",
+        "if total_minutos_nocturnos_desertores > total_minutos_nocturnos_no_desertores:\n",
+        "  print(\"\\nLos clientes que desertaron tienen más minutos usados en llamadas nocturnas\")\n",
+        "else:\n",
+        "  print(\"\\nLos clientes que permanecen tienen más minutos usados en llamadas nocturnas\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "dVWkrGtuOpoY",
+        "outputId": "1127ba24-1971-41f4-c452-7a1654d169d6"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "El total de minutos usados por clientes que desertaron en llamadas nocturnas es:  99126.9\n",
+            "El total de minutos usados por clientes que permanecen en llamadas nocturnas es:  570379.6\n",
+            "\n",
+            "Los clientes que permanecen tienen más minutos usados en llamadas nocturnas\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Compara el número total de llamadas (total day calls) entre clientes con y sin churn.\n",
+        "total_daycalls_desertores = df1[df1['churn'] == True]['total day calls'].sum()\n",
+        "print(\"El total de llamadas diurnas por clientes que desertaron es: \", total_daycalls_desertores)\n",
+        "total_daycalls_no_desertores = df1[df1['churn'] == False]['total day calls'].sum()\n",
+        "print(\"El total de llamadas diurnas por clientes que permanecen es: \", total_daycalls_no_desertores)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "GeM6GcR8PmDM",
+        "outputId": "ddc40b5e-7fef-4c31-b408-73f82ed5d042"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "El total de llamadas diurnas por clientes que desertaron es:  48945\n",
+            "El total de llamadas diurnas por clientes que permanecen es:  285807\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Impacto de las Llamadas al Servicio al Cliente en la Deserción**\n",
+        "\n",
+        "Calcula el número promedio de llamadas al servicio al cliente (customer service calls) entre clientes que desertaron y los que no.\n",
+        "\n",
+        "Divide los clientes en dos grupos:\n",
+        "\n",
+        "- Grupo 1: Clientes que llamaron más de 3 veces al servicio al cliente.\n",
+        "- Grupo 2: Clientes que llamaron 3 veces o menos.\n",
+        "Compara la tasa de churn entre ambos grupos."
+      ],
+      "metadata": {
+        "id": "aKl9LnZgGsDT"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Calcula el número promedio de llamadas al servicio al cliente (customer service calls) entre clientes que desertaron y los que no.\n",
+        "\n",
+        "# Asignamos a una variable el valor del promedio para los elementos filtrado por desertores\n",
+        "promedio_desertores_calls = df1[df1['churn'] == True]['customer service calls'].mean()\n",
+        "print(\"El promedio de llamadas de servicio al cliente que desertaron es: \",round(promedio_desertores_calls, 2), \"llamadas\")\n",
+        "\n",
+        "# Asignamos a una variable el valor del promedio para los elementos filtrado por no desertores\n",
+        "promedio_nodesertores_calls = df1[df1['churn'] == False]['customer service calls'].mean()\n",
+        "print(\"El promedio de llamadas de servicio al cliente que no desertaron es: \",round(promedio_nodesertores_calls, 2), \"llamadas\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "lPKB4PzQpzYQ",
+        "outputId": "f8d74b14-1474-4e1c-dcc7-4e6e93ef594f"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "El promedio de llamadas de servicio al cliente que desertaron es:  2.23 llamadas\n",
+            "El promedio de llamadas de servicio al cliente que no desertaron es:  1.45 llamadas\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Divide los clientes en dos grupos:\n",
+        "\n",
+        "# Grupo 1: Clientes que llamaron más de 3 veces al servicio al cliente.\n",
+        "# Grupo 2: Clientes que llamaron 3 veces o menos. Compara la tasa de churn entre ambos grupos.\n",
+        "\n",
+        "# determinamos el numero de clientes por grupo\n",
+        "clientes_grupo_1 = (df1['customer service calls'] > 3).sum()\n",
+        "print(\"Clientes que llamaron más de 3 veces (grupo 1) al servicio al cliente: \",clientes_grupo_1,)\n",
+        "clientes_grupo_2 = (df1['customer service calls'] <= 3).sum()\n",
+        "print(\"Clientes que llamaron 3 veces o menos (grupo 2) al servicio al cliente: \",clientes_grupo_2,)\n",
+        "\n",
+        "# determinamos el numero de clientes desertores por grupo\n",
+        "clientes_grupo_1_desertores = ((df1['customer service calls'] > 3) & (df1['churn'] == True)).sum()\n",
+        "clientes_grupo_2_desertores = ((df1['customer service calls'] <= 3) & (df1['churn'] == True)).sum()\n",
+        "print(\"\\nClientes que llamaron más de 3 veces (grupo 1) al servicio al cliente y desertaron: \",clientes_grupo_1_desertores,)\n",
+        "print(\"Clientes que llamaron 3 veces o menos (grupo 2) al servicio al cliente y desertaron: \",clientes_grupo_2_desertores,)\n",
+        "\n",
+        "#determinamos la tasa de desercion por grupo\n",
+        "tasa_grupo_1 = (clientes_grupo_1_desertores / clientes_grupo_1) * 100\n",
+        "tasa_grupo_2 = (clientes_grupo_2_desertores / clientes_grupo_2) * 100\n",
+        "print(\"\\nTasa de desertores grupo 1: \",round(tasa_grupo_1, 2), \"%\")\n",
+        "print(\"Tasa de desertores grupo 2: \",round(tasa_grupo_2, 2), \"%\")\n",
+        "\n",
+        "if tasa_grupo_1 > tasa_grupo_2:\n",
+        "  print(\"\\nEl grupo 1 tiene mayor tasa de deserción\")\n",
+        "else:\n",
+        "  print(\"\\nEl grupo 2 tiene mayor tasa de deserción\")\n"
+      ],
+      "metadata": {
+        "id": "ac9qDXgrGz-M",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "d8265c83-1f19-489c-8b76-56de63bd8051"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Clientes que llamaron más de 3 veces (grupo 1) al servicio al cliente:  267\n",
+            "Clientes que llamaron 3 veces o menos (grupo 2) al servicio al cliente:  3066\n",
+            "\n",
+            "Clientes que llamaron más de 3 veces (grupo 1) al servicio al cliente y desertaron:  138\n",
+            "Clientes que llamaron 3 veces o menos (grupo 2) al servicio al cliente y desertaron:  345\n",
+            "\n",
+            "Tasa de desertores grupo 1:  51.69 %\n",
+            "Tasa de desertores grupo 2:  11.25 %\n",
+            "\n",
+            "El grupo 1 tiene mayor tasa de deserción\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Análisis del Costo de las Llamadas y Churn**\n",
+        "\n",
+        "Compara el costo total de llamadas diurnas (total day charge) entre clientes con y sin churn.\n",
+        "\n",
+        "Compara el costo total de llamadas nocturnas (total night charge).\n",
+        "\n",
+        "¿Los clientes con mayor gasto en llamadas internacionales (total intl charge) tienen más probabilidades de desertar?"
+      ],
+      "metadata": {
+        "id": "U7oTziiyG0Wb"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Solución propuesta\n",
+        "\n",
+        "# Compara el costo total de llamadas diurnas (total day charge) entre clientes con y sin churn.\n",
+        "\n",
+        "#calculamos el costo total de llamadas para clientes desertores\n",
+        "costo_llamadas_diurnas_desertores = df1[df1['churn'] == True]['total day charge'].sum()\n",
+        "print(\"El costo total de llamadas diurnas por clientes que desertaron es: $\",round(costo_llamadas_diurnas_desertores, 2))\n",
+        "\n",
+        "#calculamos el costo total de llamadas para clientes no desertores\n",
+        "costo_llamadas_diurnas_no_desertores = df1[df1['churn'] == False]['total day charge'].sum()\n",
+        "print(\"El costo total de llamadas diurnas por clientes que permanecen es: $\",round(costo_llamadas_diurnas_no_desertores, 2))\n",
+        "\n",
+        "#hacemos la comparación y determinamos que grupo de clientes gasto mas en llamadas diurnas\n",
+        "if costo_llamadas_diurnas_desertores > costo_llamadas_diurnas_no_desertores:\n",
+        "  print(\"\\nLos clientes que desertaron tienen más gasto en llamadas diurnas\")\n",
+        "else:\n",
+        "  print(\"\\nLos clientes que permanecen tienen más gasto en llamadas diurnas\")\n"
+      ],
+      "metadata": {
+        "id": "YWGmcLdoIYwx",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "126c0dc2-054d-4102-ff10-2d03e22c1f69"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "El costo total de llamadas diurnas por clientes que desertaron es: $ 16989.97\n",
+            "El costo total de llamadas diurnas por clientes que permanecen es: $ 84874.2\n",
+            "\n",
+            "Los clientes que permanecen tienen más gasto en llamadas diurnas\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Compara el costo total de llamadas nocturnas (total night charge).\n",
+        "\n",
+        "costo_llamadas_nocturnas_desertores = df1[df1['churn'] == True]['total night charge'].sum()\n",
+        "print(\"El costo total de llamadas nocturnas por clientes que desertaron es: $\",round(costo_llamadas_nocturnas_desertores, 2))\n",
+        "costo_llamadas_nocturnas_no_desertores = df1[df1['churn'] == False]['total night charge'].sum()\n",
+        "print(\"El costo total de llamadas nocturnas por clientes que permanecen es: $\",round(costo_llamadas_nocturnas_no_desertores, 2))\n",
+        "\n",
+        "if costo_llamadas_nocturnas_desertores > costo_llamadas_nocturnas_no_desertores:\n",
+        "  print(\"\\nLos clientes que desertaron tienen más gasto en llamadas nocturnas\")\n",
+        "else:\n",
+        "  print(\"\\nLos clientes que permanecen tienen más gasto en llamadas nocturnas\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "f5ELzhJ31xEj",
+        "outputId": "07389dee-a48a-4208-821f-8e163f6b2b7e"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "El costo total de llamadas nocturnas por clientes que desertaron es: $ 4460.76\n",
+            "El costo total de llamadas nocturnas por clientes que permanecen es: $ 25667.31\n",
+            "\n",
+            "Los clientes que permanecen tienen más gasto en llamadas nocturnas\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Solución propuesta ELP\n",
+        "# Costo total de llamadas diurnas para clientes que desertaron y los que no\n",
+        "costo_total_diurnas_desertores = df1[df1['churn']]['total day charge'].sum()\n",
+        "costo_total_diurnas_no_desertores = df1[~df1['churn']]['total day charge'].sum()\n",
+        "\n",
+        "# Costo total de llamadas nocturnas\n",
+        "costo_total_nocturnas_desertores = df1[df1['churn']]['total night charge'].sum()\n",
+        "costo_total_nocturnas_no_desertores = df1[~df1['churn']]['total night charge'].sum()\n",
+        "\n",
+        "# Costo total de llamadas internacionales\n",
+        "costo_total_intl_desertores = df1[df1['churn']]['total intl charge'].sum()\n",
+        "costo_total_intl_no_desertores = df1[~df1['churn']]['total intl charge'].sum()\n",
+        "\n",
+        "#  Mostramos los resultados de manera clara\n",
+        "print(\"\\n Costo total de llamadas diurnas:\")\n",
+        "print(f\"   - Clientes que desertaron: ${costo_total_diurnas_desertores:.2f}\")\n",
+        "print(f\"   - Clientes que permanecen: ${costo_total_diurnas_no_desertores:.2f}\")\n",
+        "\n",
+        "print(\"\\n Costo total de llamadas nocturnas:\")\n",
+        "print(f\"   - Clientes que desertaron: ${costo_total_nocturnas_desertores:.2f}\")\n",
+        "print(f\"   - Clientes que permanecen: ${costo_total_nocturnas_no_desertores:.2f}\")\n",
+        "\n",
+        "print(\"\\n Costo total de llamadas internacionales:\")\n",
+        "print(f\"   - Clientes que desertaron: ${costo_total_intl_desertores:.2f}\")\n",
+        "print(f\"   - Clientes que permanecen: ${costo_total_intl_no_desertores:.2f}\")\n",
+        "\n",
+        "# Análisis de gasto en llamadas diurnas\n",
+        "if costo_total_diurnas_desertores > costo_total_diurnas_no_desertores:\n",
+        "    print(\"\\n Los clientes que desertaron generaron un MAYOR costo total en llamadas diurnas.\")\n",
+        "else:\n",
+        "    print(\"\\n Los clientes que permanecen generaron un MAYOR costo total en llamadas diurnas.\")\n",
+        "\n",
+        "# Análisis de gasto en llamadas nocturnas\n",
+        "if costo_total_nocturnas_desertores > costo_total_nocturnas_no_desertores:\n",
+        "    print(\"\\n Los clientes que desertaron generaron un MAYOR costo total en llamadas nocturnas.\")\n",
+        "else:\n",
+        "    print(\"\\n Los clientes que permanecen generaron un MAYOR costo total en llamadas nocturnas.\")\n",
+        "\n",
+        "# Análisis de gasto en llamadas internacionales\n",
+        "if costo_total_intl_desertores > costo_total_intl_no_desertores:\n",
+        "    print(\"\\n Los clientes con MAYOR gasto en llamadas internacionales tienen más probabilidades de desertar.\")\n",
+        "else:\n",
+        "    print(\"\\n Los clientes con MENOR gasto en llamadas internacionales tienen más probabilidades de desertar.\")"
+      ],
+      "metadata": {
+        "id": "D5C_f-8u3hq9",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "a0b6fc3d-e35f-4c8e-9d9c-f2fff33a9954"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            " Costo total de llamadas diurnas:\n",
+            "   - Clientes que desertaron: $16989.97\n",
+            "   - Clientes que permanecen: $84874.20\n",
+            "\n",
+            " Costo total de llamadas nocturnas:\n",
+            "   - Clientes que desertaron: $4460.76\n",
+            "   - Clientes que permanecen: $25667.31\n",
+            "\n",
+            " Costo total de llamadas internacionales:\n",
+            "   - Clientes que desertaron: $1395.65\n",
+            "   - Clientes que permanecen: $7818.70\n",
+            "\n",
+            " Los clientes que permanecen generaron un MAYOR costo total en llamadas diurnas.\n",
+            "\n",
+            " Los clientes que permanecen generaron un MAYOR costo total en llamadas nocturnas.\n",
+            "\n",
+            " Los clientes con MENOR gasto en llamadas internacionales tienen más probabilidades de desertar.\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
