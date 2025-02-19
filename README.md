@@ -1,6 +1,5 @@
 # Analisis-BD-Telecom
 Caso de Negocio: Análisis de Deserción de Clientes en una Empresa de Telecomunicaciones
-Para el **README.md**, lo mejor es que sea claro y conciso. Aquí tienes una estructura recomendada:  
 
 ---
 
